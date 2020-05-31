@@ -1,0 +1,13 @@
+[Unit]
+Description=Get weight service
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+User=root
+ExecStart=sudo /home/rock/mi-scale-2-fitbit/get_weight.py
+
+[Install]
+WantedBy=multi-user.target
