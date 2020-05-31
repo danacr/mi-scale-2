@@ -1,3 +1,14 @@
+# Forked and added fitbit data upload
+
+Please check the `.env.example` file for the required parameters.
+
+To run on startup
+```
+sudo cp get_weight.service /etc/systemd/system/get_weight.service
+sudo systemctl start get_weight
+sudo systemctl enable get_weight
+```
+
 # mi-scale-2
 
 Get Xiaomi Mi Smart Scale 2 weight

@@ -5,7 +5,12 @@
 # \w <3 @qbbr
 
 import argparse
+import os
+import fitbit
 from bluepy.btle import Scanner, DefaultDelegate
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # 1 - flags, 2 - Incomplete 16b Services, 255 - Manufacturer, 22 - 16b Service Data, 9 - Complete Local Name
 SERVICE_DATA = 22  # [1d18828809e4070310112302]
@@ -14,7 +19,7 @@ SERVICE_DATA = 22  # [1d18828809e4070310112302]
 class ScanDelegate(DefaultDelegate):
     def __init__(self, args):
         DefaultDelegate.__init__(self)
-        self.mac_address = args.mac.upper()
+        self.mac_address = os.environ['mac']
         self.with_units = args.with_units
         self.is_verbose = args.verbose > 0
         self.last_raw_data = None
@@ -45,7 +50,13 @@ class ScanDelegate(DefaultDelegate):
                     if not self.with_units:
                         if (raw_data[0] & (1 << 1)) != 0:  # kg
                             weight /= 2  # catty to kg
-                        print(weight)  # outout: 74.7
+                        print(weight)  # output: 74.7
+                        if float(os.environ['lower']) <= weight <= float(os.environ['upper']):
+                            authd_client = fitbit.Fitbit(os.environ['client_key'], os.environ['client_secret'],
+                                    access_token=os.environ['access_token'], refresh_token=os.environ['refresh_token'], system=os.environ['unit_system'])
+                            authd_client.user_profile_update(data={u'weight': weight})
+                            print("uploaded data")
+
                     else:
                         if (raw_data[0] & (1 << 4)) != 0:  # chinese catty
                             unit = "jin"
@@ -57,12 +68,11 @@ class ScanDelegate(DefaultDelegate):
                         else:
                             unit = "unknown"
 
-                        print(weight, unit)  # outout: 74.7 kg
+                        print(weight, unit)  # output: 74.7 kg
 
 
 def main():
     parser = argparse.ArgumentParser(description="Get Xiaomi Mi Smart Scale 2 weight.")
-    parser.add_argument("mac", help="Device MAC address")
     parser.add_argument('--with-units', action='store_true', help="return weight \w units")
     parser.add_argument('--verbose', '-v', action='count', default=0)
     scanner = Scanner().withDelegate(ScanDelegate(parser.parse_args()))
