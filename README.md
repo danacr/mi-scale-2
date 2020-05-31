@@ -3,11 +3,16 @@
 Please check the `.env.example` file for the required parameters.
 
 To run on startup
+
 ```
 sudo cp get_weight.service /etc/systemd/system/get_weight.service
 sudo systemctl start get_weight
 sudo systemctl enable get_weight
 ```
+
+![It works](images/it_works.jpg)
+
+> Running on a [Rock Pi S](https://wiki.radxa.com/RockpiS)
 
 # mi-scale-2
 
@@ -15,9 +20,11 @@ Get Xiaomi Mi Smart Scale 2 weight
 
 ## Requirements
 
- * python3
- * bluepy
- * root permission for `bluepy.btle`
+- python3
+- bluepy
+- fitbit
+- python-dotenv
+- root permission for `bluepy.btle`
 
 ```bash
 sudo pip install -r requirements.txt
@@ -25,33 +32,32 @@ sudo pip install -r requirements.txt
 
 ## Usage
 
-run \w sudo || from #root:
+Always run with `sudo`:
 
 ```bash
-sudo ./get_weight.py 00:00:00:00:00:00
-# ./get_weight.py 00:00:00:00:00:00 --with-units
-# ./get_weight.py 00:00:00:00:00:00 --verbose
+sudo ./get_weight.py
+# ./get_weight.py --with-units
+# ./get_weight.py --verbose
 # ./get_weight.py --help
 ```
 
 ## Help
 
-get dev mac address:
+How to get the Scale's Mac address without using the Mi App:
 
 ```bash
 sudo hcitool lescan
 ```
 
-if u hv troubleshoots \w dev - restart u bluetooth/adapter
+If you encounter issues regarding bluetooth on your device, try restarting the bluetooth adapter
 
 ```bash
 sudo hciconfig hci0 reset
-sudo invoke-rc.d bluetooth restart
 ```
 
 ### Reverse Engineering RAW Schema for Mi Scale 2
 
-!!! *slightly different than from openScale wiki* !!!
+!!! _slightly different than from openScale wiki_ !!!
 
 **byte 0:**
 
@@ -65,8 +71,9 @@ sudo invoke-rc.d bluetooth restart
 - 7 bit - weight removed
 
 **byte 1-2:**
- - weight (little endian)
+
+- weight (little endian)
 
 ## Links
 
- * https://github.com/oliexdev/openScale/wiki/Xiaomi-Bluetooth-Mi-Scale
+- https://github.com/oliexdev/openScale/wiki/Xiaomi-Bluetooth-Mi-Scale

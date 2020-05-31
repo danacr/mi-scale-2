@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # run \w sudo || from #root
-# tested only on raspberry pi 3b and mi scale 2
+# tested only on raspberry pi 3b (danacr tested using the Rock Pi S) and mi scale 2
 # \w <3 @qbbr
 
 import argparse
@@ -30,7 +30,8 @@ class ScanDelegate(DefaultDelegate):
 
     def parseData(self, dev):
         if self.is_verbose:
-            print('Device %s is %s, rssi: %d dBm, connectable: %s.' % (dev.addr, dev.addrType, dev.rssi, dev.connectable))
+            print('Device %s is %s, rssi: %d dBm, connectable: %s.' %
+                  (dev.addr, dev.addrType, dev.rssi, dev.connectable))
 
         for (adtype, desc, value) in dev.getScanData():
             if adtype == SERVICE_DATA and value.startswith('1d18'):
@@ -38,14 +39,15 @@ class ScanDelegate(DefaultDelegate):
                 if raw_data == self.last_raw_data:
                     if self.is_verbose:
                         print("skip duplicate data")
-                    return;
+                    return
 
                 is_stabilized = (raw_data[0] & (1 << 5)) != 0
                 is_weight_removed = (raw_data[0] & (1 << 7)) != 0
                 self.last_raw_data = raw_data
 
                 if is_stabilized is True and is_weight_removed is False:
-                    weight = int.from_bytes(raw_data[1:3], byteorder='little') / 100
+                    weight = int.from_bytes(
+                        raw_data[1:3], byteorder='little') / 100
 
                     if not self.with_units:
                         if (raw_data[0] & (1 << 1)) != 0:  # kg
@@ -53,8 +55,9 @@ class ScanDelegate(DefaultDelegate):
                         print(weight)  # output: 74.7
                         if float(os.environ['lower']) <= weight <= float(os.environ['upper']):
                             authd_client = fitbit.Fitbit(os.environ['client_key'], os.environ['client_secret'],
-                                    access_token=os.environ['access_token'], refresh_token=os.environ['refresh_token'], system=os.environ['unit_system'])
-                            authd_client.user_profile_update(data={u'weight': weight})
+                                                         access_token=os.environ['access_token'], refresh_token=os.environ['refresh_token'], system=os.environ['unit_system'])
+                            authd_client.user_profile_update(
+                                data={u'weight': weight})
                             print("uploaded data")
 
                     else:
@@ -72,8 +75,10 @@ class ScanDelegate(DefaultDelegate):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Get Xiaomi Mi Smart Scale 2 weight.")
-    parser.add_argument('--with-units', action='store_true', help="return weight \w units")
+    parser = argparse.ArgumentParser(
+        description="Get Xiaomi Mi Smart Scale 2 weight.")
+    parser.add_argument('--with-units', action='store_true',
+                        help="return weight \w units")
     parser.add_argument('--verbose', '-v', action='count', default=0)
     scanner = Scanner().withDelegate(ScanDelegate(parser.parse_args()))
 
