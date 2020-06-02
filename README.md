@@ -4,11 +4,19 @@ Please check the `.env.example` file for the required parameters.
 
 To run on startup
 
-```
+```sh
 sudo cp get_weight.service /etc/systemd/system/get_weight.service
 sudo systemctl start get_weight
 sudo systemctl enable get_weight
 ```
+
+Useful command to copy the `.env` file to your target device:
+
+```sh
+scp .env rock@192.168.1.139:~/mi-scale-2-fitbit
+```
+
+> Note, since adding `ops_genie`, `pip3 install -r requirements.txt` takes a long time on a low powered sbc due to the installation of the `numpy` dependency.
 
 ![It works](images/it_works.jpg)
 
@@ -24,6 +32,7 @@ Get Xiaomi Mi Smart Scale 2 weight
 - bluepy
 - fitbit
 - python-dotenv
+- opsgenie_sdk
 - root permission for `bluepy.btle`
 
 ```bash
@@ -36,7 +45,6 @@ Always run with `sudo`:
 
 ```bash
 sudo ./get_weight.py
-# ./get_weight.py --with-units
 # ./get_weight.py --verbose
 # ./get_weight.py --help
 ```

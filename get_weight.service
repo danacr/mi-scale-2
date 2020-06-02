@@ -7,7 +7,7 @@ Type=simple
 Restart=always
 RestartSec=5
 User=root
-ExecStart=sudo /home/rock/mi-scale-2-fitbit/get_weight.py
+ExecStart=sudo /home/dan/mi-scale-2-fitbit/main.py
 
 [Install]
 WantedBy=multi-user.target

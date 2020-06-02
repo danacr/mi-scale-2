@@ -1,3 +1,4 @@
 bluepy
 fitbit
 python-dotenv
+opsgenie_sdk
