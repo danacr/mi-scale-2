@@ -52,7 +52,7 @@ class ScanDelegate(DefaultDelegate):
                             data={u'weight': weight})
                         print("Uploaded data")
                         alert = ops.Alert()
-                        response = alert.create_alert("test")
+                        response = alert.create_alert(weight)
                         alert_id = response.id
                         result = response.retrieve_result()
                         alert.get_alert(alert_id)
