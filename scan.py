@@ -2,9 +2,8 @@
 
 from bluepy.btle import DefaultDelegate
 
-import fitbit
-import ops_genie as ops
 import os
+import upload
 
 
 class ScanDelegate(DefaultDelegate):
@@ -46,14 +45,5 @@ class ScanDelegate(DefaultDelegate):
                         weight /= 2  # catty to kg
                     print(weight)  # output: 74.7
                     if float(os.environ['lower']) <= weight <= float(os.environ['upper']):
-                        authd_client = fitbit.Fitbit(os.environ['client_key'], os.environ['client_secret'],
-                                                     access_token=os.environ['access_token'], refresh_token=os.environ['refresh_token'], system=os.environ['unit_system'])
-                        authd_client.user_profile_update(
-                            data={u'weight': weight})
-                        print("Uploaded data")
-                        alert = ops.Alert()
-                        response = alert.create_alert(weight)
-                        alert_id = response.id
-                        result = response.retrieve_result()
-                        alert.get_alert(alert_id)
-                        alert.close_alert(alert_id)
+                        weight_upload = upload.Upload()
+                        weight_upload.upload_weight(weight)
